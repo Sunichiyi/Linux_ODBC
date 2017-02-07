@@ -1,9 +1,11 @@
 1.
-install unixodbc unixodbc-dev freetds-bin freetds-common freetds-dev tdsodbc odbcinst
+install unixodbc unixodbc-dev odbcinst 
+install freetds-bin freetds-common freetds-dev tdsodbc (for MSSQL)
+install libmyodbc (for MySQL)
 
-2.
+2.(for MSSQL)
 設定：
-tsql -C（確認Version & freetds.conf位置）
+tsql -C（確認freetds.conf位置）
 {
 	freetds.conf
 	{
@@ -19,9 +21,9 @@ tsql -S <servername> -U <username> -P <password>（確認freetds.conf設定正�
 
 3.
 設定：
-odbinst -j（確認Version & (dbcinst.ini & odbc.ini)位置）
+odbinst -j（確認(dbcinst.ini & odbc.ini)位置）
 {
-	dbcinst.ini
+	odbcinst.ini
 	{
 		[FreeTDS]
 		Description = TDS driver (Sybase/MS SQL)
@@ -30,19 +32,30 @@ odbinst -j（確認Version & (dbcinst.ini & odbc.ini)位置）
 		CPTimeout =
 		CPReuse =
 		FileUsage = 1
+
+		[MySQL]
+		Description     = ODBC driver for mariaDB
+		Driver          = /usr/lib/arm-linux-gnueabihf/odbc/libmyodbc.so
 	}
 
 	odbc.ini
 	{
 		[MSSQL]
 		Driver = FreeTDS
-		Description = ODBC connection via FreeTDS
+		Description = connection to MSSQL
 		Trace = No
 		Servername = MSSQL
 		UID = sa
 		Port = 1433
 		Database = WebAccessPdata
 		TDS_Version = auto
+
+		[mariadb-connector]
+		Description = connection to  MySQL
+		Driver      = MySQL
+		Database    = test
+		Server      = 127.0.0.1
+		Port        = 3306
 	}
 }
 
