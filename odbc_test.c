@@ -28,6 +28,17 @@ int main(int argc,char *argv[])
 
 	while(1)
 	{
+		V_OD_erg=SQLAllocHandle(SQL_HANDLE_STMT, V_OD_hdbc, &V_OD_hstmt);
+		if ((V_OD_erg != SQL_SUCCESS) && (V_OD_erg != SQL_SUCCESS_WITH_INFO))
+		{
+			printf("Fehler im AllocStatement %d\n",V_OD_erg);
+			SQLGetDiagRec(SQL_HANDLE_DBC, V_OD_hdbc,1, V_OD_stat,&V_OD_err,V_OD_msg,100,&V_OD_mlen);
+			printf("%s (%d)\n",V_OD_msg,V_OD_err);
+        	SQLDisconnect(V_OD_hdbc);
+        	SQLFreeHandle(SQL_HANDLE_DBC,V_OD_hdbc);
+			SQLFreeHandle(SQL_HANDLE_ENV, V_OD_Env);
+			exit(0);
+		}
 		//--------合併陣列&宣告類型--------
 		SQLBindCol(V_OD_hstmt,1,SQL_C_ULONG,&V_OD_id,150,&V_OD_err);
 		SQLBindCol(V_OD_hstmt,2,SQL_C_CHAR, &V_OD_buffer,150,&V_OD_err);
@@ -101,17 +112,6 @@ void Connect2ODBC(void)
 		exit(0);
 	}
 	printf("Connected !\n");
-	V_OD_erg=SQLAllocHandle(SQL_HANDLE_STMT, V_OD_hdbc, &V_OD_hstmt);
-	if ((V_OD_erg != SQL_SUCCESS) && (V_OD_erg != SQL_SUCCESS_WITH_INFO))
-	{
-		printf("Fehler im AllocStatement %d\n",V_OD_erg);
-		SQLGetDiagRec(SQL_HANDLE_DBC, V_OD_hdbc,1, V_OD_stat,&V_OD_err,V_OD_msg,100,&V_OD_mlen);
-		printf("%s (%d)\n",V_OD_msg,V_OD_err);
-        	SQLDisconnect(V_OD_hdbc);
-        	SQLFreeHandle(SQL_HANDLE_DBC,V_OD_hdbc);
-		SQLFreeHandle(SQL_HANDLE_ENV, V_OD_Env);
-		exit(0);
-	}
 }
 
 void Disconnect2ODBC(void)
